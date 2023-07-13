@@ -15,3 +15,9 @@ export const directionDispatch: Record<
   LEFT: (oldCoord) => ({ x: oldCoord.x - 1, y: oldCoord.y + 0 }),
   RIGHT: (oldCoord) => ({ x: oldCoord.x + 1, y: oldCoord.y + 0 }),
 };
+
+export function getRandomInt(min: number, max: number) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min) + min); // The maximum is exclusive and the minimum is inclusive
+}

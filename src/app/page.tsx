@@ -3,7 +3,12 @@ import styles from "./page.module.css";
 import React from "react";
 import classNames from "classnames";
 import { Coordionate, Direction, N } from "./type";
-import { defaultCoordinates, directionDispatch, directionMap } from "./utils";
+import {
+  defaultCoordinates,
+  directionDispatch,
+  directionMap,
+  getRandomInt,
+} from "./utils";
 
 /**
  * State behaves like a snapshot. When we call three setState consecutively
@@ -23,6 +28,7 @@ export default function Home() {
   const requestRef = React.useRef<number>(0);
   const previousTimeRef = React.useRef<number>();
   const directionRef = React.useRef<Direction>(Direction.DOWN);
+  const foodRef = React.useRef<Coordionate>();
 
   React.useEffect(() => {
     const onKeyDown = (e: any) => {
@@ -49,20 +55,37 @@ export default function Home() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, []);
 
+  const generateNewFood = (coords: Coordionate[]) => {
+    const random = () => ({
+      x: getRandomInt(0, N - 1),
+      y: getRandomInt(0, N - 1),
+    });
+
+    let foodCoord = random();
+    // make sure the food is not generated on the snake body
+    while (
+      !!coords.find(({ x, y }) => foodCoord.x === x && foodCoord.y === y)
+    ) {
+      foodCoord = random();
+    }
+    foodRef.current = foodCoord;
+  };
+
   React.useEffect(() => {
+    generateNewFood(coords);
     function update(currentDelta?: number) {
       requestRef.current = requestAnimationFrame(update);
 
       var delta = currentDelta! - previousTimeRef.current!;
 
-      if (500 && delta < 100 / 1) {
+      if (500 && delta < 500 / 1) {
         return;
       }
 
       const calculateCoordinates = (prevCoords: Coordionate[]) => {
         const hd = prevCoords[0];
         prevCoords.pop();
-        console.log(directionRef.current);
+
         const newHead = directionDispatch[directionRef.current](hd);
 
         if (newHead.x < 0) {
@@ -78,7 +101,16 @@ export default function Home() {
           newHead.y = 0;
         }
 
-        return [newHead, ...prevCoords];
+        const newCoords = [newHead, ...prevCoords];
+        if (
+          newHead.x === foodRef.current?.x &&
+          newHead.y === foodRef.current?.y
+        ) {
+          newCoords.push(prevCoords[prevCoords.length - 1]);
+          generateNewFood(prevCoords);
+        }
+
+        return newCoords;
       };
 
       setCoords(calculateCoordinates);
@@ -99,6 +131,8 @@ export default function Home() {
                 [styles.snake]: coords.find(
                   (coord) => coord.x === x && coord.y === y
                 ),
+                [styles.food]:
+                  foodRef.current?.x === x && foodRef.current?.y === y,
               })}
             >{`${x}-${y}`}</div>
           );
