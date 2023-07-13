@@ -2,19 +2,8 @@
 import styles from "./page.module.css";
 import React from "react";
 import classNames from "classnames";
-
-const N = 10;
-
-interface Coordionate {
-  x: number;
-  y: number;
-}
-
-const def = [
-  { x: 5, y: 5 },
-  // { x: 5, y: 4 },
-  //{ x: 5, y: 3 },
-];
+import { Coordionate, Direction, N } from "./type";
+import { defaultCoordinates, directionDispatch, directionMap } from "./utils";
 
 /**
  * State behaves like a snapshot. When we call three setState consecutively
@@ -29,60 +18,75 @@ const def = [
  */
 
 export default function Home() {
-  const [coords, setCoords] = React.useState<Coordionate[]>(def);
+  const [coords, setCoords] = React.useState<Coordionate[]>(defaultCoordinates);
 
   const requestRef = React.useRef<number>(0);
   const previousTimeRef = React.useRef<number>();
-
-  // const animate = (time: any) => {
-  //   if (previousTimeRef.current != undefined) {
-  //     const deltaTime = time - previousTimeRef.current;
-
-  //     // const newCoords = [];
-  //     // for (let i = 0; i < coords.length; i++) {
-  //     //   newCoords.push({ x: coords[i].x, y: coords[i].y + 1 });
-  //     // }
-  //     setCoords((prevCoords) =>
-  //       prevCoords.map(({ x, y }) => ({ x, y: y + 1 }))
-  //     );
-
-  //     setCount((prevCount) => (prevCount + deltaTime * 0.01) % 100);
-  //   }
-
-  //   previousTimeRef.current = time;
-  //   requestRef.current = requestAnimationFrame(animate);
-  // };
+  const directionRef = React.useRef<Direction>(Direction.DOWN);
 
   React.useEffect(() => {
-    // requestRef.current = requestAnimationFrame(animate);
-    // return () => cancelAnimationFrame(requestRef.current);
-    function update(currentDelta: number) {
+    const onKeyDown = (e: any) => {
+      switch (e.key) {
+        case "ArrowUp":
+          directionRef.current = Direction.UP;
+          break;
+        case "ArrowDown":
+          directionRef.current = Direction.DOWN;
+          break;
+        case "ArrowLeft":
+          directionRef.current = Direction.LEFT;
+          break;
+        case "ArrowRight":
+          directionRef.current = Direction.RIGHT;
+          break;
+        default:
+          directionRef.current = Direction.DOWN;
+          break;
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
+
+  React.useEffect(() => {
+    function update(currentDelta?: number) {
       requestRef.current = requestAnimationFrame(update);
 
-      var delta = currentDelta - previousTimeRef.current;
+      var delta = currentDelta! - previousTimeRef.current!;
 
-      if (500 && delta < 1000 / 1) {
+      if (500 && delta < 100 / 1) {
         return;
       }
 
-      const calculateCoordinates = () => {};
+      const calculateCoordinates = (prevCoords: Coordionate[]) => {
+        const hd = prevCoords[0];
+        prevCoords.pop();
+        console.log(directionRef.current);
+        const newHead = directionDispatch[directionRef.current](hd);
 
-      setCoords((prevCoords) =>
-        prevCoords.map(({ x, y }) => ({ x, y: y + 1 }))
-      );
+        if (newHead.x < 0) {
+          newHead.x = N - 1;
+        }
+        if (newHead.x > N - 1) {
+          newHead.x = 0;
+        }
+        if (newHead.y < 0) {
+          newHead.y = N - 1;
+        }
+        if (newHead.y > N - 1) {
+          newHead.y = 0;
+        }
+
+        return [newHead, ...prevCoords];
+      };
+
+      setCoords(calculateCoordinates);
 
       previousTimeRef.current = currentDelta;
     }
     update();
   }, []); // Make sure the effect runs only once
-
-  // React.useEffect(() => {
-  //   requestRef.current = requestAnimationFrame(animate);
-  //   return () => cancelAnimationFrame(requestRef.current);
-  // }, []);
-
-  // console.log(count);
-  console.log(coords[0].x, coords[0].y);
 
   return (
     <div className={styles.root}>
