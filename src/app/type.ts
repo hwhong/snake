@@ -1,4 +1,4 @@
-export const N = 10;
+export const N = 20;
 
 export interface Coordionate {
   x: number;

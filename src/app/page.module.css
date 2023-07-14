@@ -1,13 +1,24 @@
 .root {
-  grid-template-columns: repeat(10, 30px);
-  grid-template-rows: repeat(10, 30px);
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+.grid {
+  grid-template-columns: repeat(20, var(--size));
+  grid-template-rows: repeat(20, var(--size));
   display: grid;
+  border: 1px solid white;
+  grid-gap: 1px;
+  background-color: white;
 }
 
 .gridItem {
-  width: 30px;
-  height: 30px;
-  border: 1px solid black;
+  background-color: #a2c9e6;
+  width: var(--size);
+  height: var(--size);
+  text-align: center;
+  font-size: 11px;
 }
 
 .snake {

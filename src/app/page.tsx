@@ -24,12 +24,13 @@ import {
 
 export default function Home() {
   const [coords, setCoords] = React.useState<Coordionate[]>(defaultCoordinates);
-
+  const [isGameOver, setIsGameOver] = React.useState(false);
   const requestRef = React.useRef<number>(0);
   const previousTimeRef = React.useRef<number>();
   const directionRef = React.useRef<Direction>(Direction.DOWN);
   const previousDirectionRef = React.useRef<Direction>();
   const foodRef = React.useRef<Coordionate>();
+  // const isGameOver = React.useRef<boolean>(false);
 
   React.useEffect(() => {
     const onKeyDown = (e: any) => {
@@ -91,6 +92,12 @@ export default function Home() {
 
         let newHead = directionDispatch[directionRef.current](hd);
 
+        // runs into itself
+        if (coords.find(({ x, y }) => x === newHead.x && y === newHead.y)) {
+          //isGameOver.current = true;
+          setIsGameOver(() => true);
+        }
+
         if (
           previousDirectionRef.current &&
           !isDiretionValid(previousDirectionRef.current, directionRef.current)
@@ -132,22 +139,25 @@ export default function Home() {
 
   return (
     <div className={styles.root}>
-      {Array.from(Array(N).keys()).map((y) => {
-        return Array.from(Array(N).keys()).map((x) => {
-          return (
-            <div
-              key={`${x}-${y}`}
-              className={classNames(styles.gridItem, {
-                [styles.snake]: coords.find(
-                  (coord) => coord.x === x && coord.y === y
-                ),
-                [styles.food]:
-                  foodRef.current?.x === x && foodRef.current?.y === y,
-              })}
-            >{`${x}-${y}`}</div>
-          );
-        });
-      })}
+      {isGameOver && <div>GAME OVER</div>}
+      <div className={styles.grid}>
+        {Array.from(Array(N).keys()).map((y) => {
+          return Array.from(Array(N).keys()).map((x) => {
+            return (
+              <div
+                key={`${x}-${y}`}
+                className={classNames(styles.gridItem, {
+                  [styles.snake]: coords.find(
+                    (coord) => coord.x === x && coord.y === y
+                  ),
+                  [styles.food]:
+                    foodRef.current?.x === x && foodRef.current?.y === y,
+                })}
+              >{`${x}-${y}`}</div>
+            );
+          });
+        })}
+      </div>
     </div>
   );
 }
