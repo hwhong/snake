@@ -6,8 +6,8 @@ import { Coordionate, Direction, N } from "./type";
 import {
   defaultCoordinates,
   directionDispatch,
-  directionMap,
   getRandomInt,
+  isDiretionValid,
 } from "./utils";
 
 /**
@@ -28,10 +28,13 @@ export default function Home() {
   const requestRef = React.useRef<number>(0);
   const previousTimeRef = React.useRef<number>();
   const directionRef = React.useRef<Direction>(Direction.DOWN);
+  const previousDirectionRef = React.useRef<Direction>();
   const foodRef = React.useRef<Coordionate>();
 
   React.useEffect(() => {
     const onKeyDown = (e: any) => {
+      previousDirectionRef.current = directionRef.current;
+
       switch (e.key) {
         case "ArrowUp":
           directionRef.current = Direction.UP;
@@ -86,7 +89,14 @@ export default function Home() {
         const hd = prevCoords[0];
         prevCoords.pop();
 
-        const newHead = directionDispatch[directionRef.current](hd);
+        let newHead = directionDispatch[directionRef.current](hd);
+
+        if (
+          previousDirectionRef.current &&
+          !isDiretionValid(previousDirectionRef.current, directionRef.current)
+        ) {
+          newHead = directionDispatch[previousDirectionRef.current](hd);
+        }
 
         if (newHead.x < 0) {
           newHead.x = N - 1;
