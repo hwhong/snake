@@ -4,6 +4,9 @@ import React from "react";
 import classNames from "classnames";
 import { Coordionate, Direction, N } from "./type";
 import {
+  AIRPORT,
+  GREEN,
+  WATER,
   defaultCoordinates,
   directionDispatch,
   getRandomInt,
@@ -75,6 +78,16 @@ export default function Home() {
     foodRef.current = foodCoord;
   };
 
+  const isCoordSnake = (x: number, y: number) =>
+    coords.find((coord) => coord.x === x && coord.y === y);
+  const isCoordFood = (x: number, y: number) => {
+    if (foodRef.current) {
+      const { x: foodX, y: foodY } = foodRef.current;
+      return foodX === x && foodY === y;
+    }
+    return false;
+  };
+
   React.useEffect(() => {
     generateNewFood(coords);
     function update(currentDelta?: number) {
@@ -143,17 +156,27 @@ export default function Home() {
       <div className={styles.grid}>
         {Array.from(Array(N).keys()).map((y) => {
           return Array.from(Array(N).keys()).map((x) => {
+            const isWater = WATER[y].find(
+              ({ from, to }) => from <= x && x <= to
+            );
+            const isGreen = GREEN[y]?.find(
+              ({ from, to }) => from <= x && x <= to
+            );
+            const isAirport = AIRPORT[y]?.find(
+              ({ from, to }) => from <= x && x <= to
+            );
+
             return (
               <div
                 key={`${x}-${y}`}
                 className={classNames(styles.gridItem, {
-                  [styles.snake]: coords.find(
-                    (coord) => coord.x === x && coord.y === y
-                  ),
-                  [styles.food]:
-                    foodRef.current?.x === x && foodRef.current?.y === y,
+                  [styles.water]: isWater,
+                  [styles.green]: isGreen,
+                  [styles.airport]: isAirport,
+                  [styles.food]: isCoordFood(x, y),
+                  [styles.snake]: isCoordSnake(x, y),
                 })}
-              >{`${x}-${y}`}</div>
+              />
             );
           });
         })}

@@ -14,17 +14,29 @@
 }
 
 .gridItem {
-  background-color: #a2c9e6;
   width: var(--size);
   height: var(--size);
   text-align: center;
   font-size: 11px;
-}
-
-.snake {
-  background-color: red;
+  background-color: #fbf1e2;
 }
 
 .food {
   background-color: aquamarine;
+}
+
+.water {
+  background-color: #a2c9e6;
+}
+
+.green {
+  background-color: #daebc1;
+}
+
+.airport {
+  background-color: #e7dabe;
+}
+
+.snake {
+  background-color: black;
 }

@@ -11,3 +11,8 @@ export enum Direction {
   LEFT = "LEFT",
   RIGHT = "RIGHT",
 }
+
+export interface Range {
+  from: number;
+  to: number;
+}
