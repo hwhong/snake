@@ -12,6 +12,8 @@ import {
   getRandomInt,
   isDiretionValid,
 } from "./utils";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faAppleAlt } from "@fortawesome/free-solid-svg-icons";
 
 /**
  * State behaves like a snapshot. When we call three setState consecutively
@@ -153,33 +155,47 @@ export default function Home() {
   return (
     <div className={styles.root}>
       {isGameOver && <div>GAME OVER</div>}
-      <div className={styles.grid}>
-        {Array.from(Array(N).keys()).map((y) => {
-          return Array.from(Array(N).keys()).map((x) => {
-            const isWater = WATER[y].find(
-              ({ from, to }) => from <= x && x <= to
-            );
-            const isGreen = GREEN[y]?.find(
-              ({ from, to }) => from <= x && x <= to
-            );
-            const isAirport = AIRPORT[y]?.find(
-              ({ from, to }) => from <= x && x <= to
-            );
+      <div className={styles.gridWrapper}>
+        <div className={styles.manhattan}>Manhattan</div>
+        <div className={styles.bronx}>The Bronx</div>
+        <div className={styles.statenIsland}>Staten Island</div>
+        <div className={styles.queens}>Queens</div>
+        <div className={styles.brooklyn}>Brooklyn</div>
+        <div className={styles.grid}>
+          {Array.from(Array(N).keys()).map((y) => {
+            return Array.from(Array(N).keys()).map((x) => {
+              const isWater = WATER[y].find(
+                ({ from, to }) => from <= x && x <= to
+              );
+              const isGreen = GREEN[y]?.find(
+                ({ from, to }) => from <= x && x <= to
+              );
+              const isAirport = AIRPORT[y]?.find(
+                ({ from, to }) => from <= x && x <= to
+              );
 
-            return (
-              <div
-                key={`${x}-${y}`}
-                className={classNames(styles.gridItem, {
-                  [styles.water]: isWater,
-                  [styles.green]: isGreen,
-                  [styles.airport]: isAirport,
-                  [styles.food]: isCoordFood(x, y),
-                  [styles.snake]: isCoordSnake(x, y),
-                })}
-              />
-            );
-          });
-        })}
+              return (
+                <div
+                  key={`${x}-${y}`}
+                  className={classNames(styles.gridItem, {
+                    [styles.water]: isWater,
+                    [styles.green]: isGreen,
+                    [styles.airport]: isAirport,
+                    [styles.snake]: isCoordSnake(x, y),
+                  })}
+                >
+                  {isCoordFood(x, y) && (
+                    <FontAwesomeIcon
+                      icon={faAppleAlt}
+                      color="#DD1533"
+                      className={styles.apple}
+                    />
+                  )}
+                </div>
+              );
+            });
+          })}
+        </div>
       </div>
     </div>
   );
