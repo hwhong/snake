@@ -41,6 +41,7 @@ export default function Home() {
   const previousDirectionRef = React.useRef<Direction>(Direction.DOWN);
   const foodRef = React.useRef<Coordionate>();
   const isGameOverRef = React.useRef<boolean>(false);
+  const appleCountRef = React.useRef<number>(0);
 
   React.useEffect(() => {
     const onKeyDown = (e: any) => {
@@ -61,6 +62,7 @@ export default function Home() {
           break;
         case " ":
           isGameOverRef.current = false;
+          setCoords(() => defaultCoordinates);
           break;
         default:
           directionRef.current = Direction.DOWN;
@@ -148,6 +150,7 @@ export default function Home() {
           newHead.x === foodRef.current?.x &&
           newHead.y === foodRef.current?.y
         ) {
+          appleCountRef.current = appleCountRef.current + 1;
           newCoords.push(prevCoords[prevCoords.length - 1]);
           generateNewFood(prevCoords);
         }
@@ -159,7 +162,9 @@ export default function Home() {
 
       previousTimeRef.current = currentDelta;
     }
-    update();
+    if (isGameOverRef.current === false) {
+      update();
+    }
   }, []); // Make sure the effect runs only once
 
   return (
@@ -171,13 +176,21 @@ export default function Home() {
         </div>
       </div>
 
+      <div className={styles.scoreBoard}>
+        <div className={styles.line} />
+        <div className={styles.titleWrapper}>
+          72 Street Station
+          <div className={styles.gameCount}>{appleCountRef.current}</div>
+        </div>
+      </div>
+
       <div className={styles.gridWrapper}>
         <div className={styles.manhattan}>Manhattan</div>
         <div className={styles.bronx}>The Bronx</div>
         <div className={styles.statenIsland}>Staten Island</div>
         <div className={styles.queens}>Queens</div>
         <div className={styles.brooklyn}>Brooklyn</div>
-        {isGameOverRef.current === false && (
+        {isGameOverRef.current === true && (
           <div className={styles.gameOverOverlay}>
             <p
               className={classNames(styles.overlayTitle, titleInter.className)}
