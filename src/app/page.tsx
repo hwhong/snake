@@ -15,8 +15,11 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAppleAlt } from "@fortawesome/free-solid-svg-icons";
 import { Inter } from "@next/font/google";
+import { Roboto_Mono } from "@next/font/google";
 
-const inter = Inter({ subsets: ["latin"], weight: "600" });
+const titleInter = Inter({ subsets: ["latin"], weight: "600" });
+const inter = Inter({ subsets: ["latin"], weight: "500" });
+const mono = Roboto_Mono({ subsets: ["latin"] });
 
 /**
  * State behaves like a snapshot. When we call three setState consecutively
@@ -32,17 +35,17 @@ const inter = Inter({ subsets: ["latin"], weight: "600" });
 
 export default function Home() {
   const [coords, setCoords] = React.useState<Coordionate[]>(defaultCoordinates);
-  const [isGameOver, setIsGameOver] = React.useState(false);
   const requestRef = React.useRef<number>(0);
   const previousTimeRef = React.useRef<number>();
   const directionRef = React.useRef<Direction>(Direction.DOWN);
   const previousDirectionRef = React.useRef<Direction>(Direction.DOWN);
   const foodRef = React.useRef<Coordionate>();
+  const isGameOverRef = React.useRef<boolean>(false);
 
   React.useEffect(() => {
     const onKeyDown = (e: any) => {
       previousDirectionRef.current = directionRef.current;
-
+      console.log(e);
       switch (e.key) {
         case "ArrowUp":
           directionRef.current = Direction.UP;
@@ -55,6 +58,9 @@ export default function Home() {
           break;
         case "ArrowRight":
           directionRef.current = Direction.RIGHT;
+          break;
+        case " ":
+          isGameOverRef.current = false;
           break;
         default:
           directionRef.current = Direction.DOWN;
@@ -110,9 +116,11 @@ export default function Home() {
         let newHead = directionDispatch[directionRef.current](hd);
 
         // runs into itself
-        if (coords.find(({ x, y }) => x === newHead.x && y === newHead.y)) {
-          //isGameOver.current = true;
-          setIsGameOver(() => true);
+        if (
+          prevCoords.find(({ x, y }) => x === newHead.x && y === newHead.y) &&
+          previousDirectionRef.current !== directionRef.current
+        ) {
+          isGameOverRef.current = true;
         }
 
         if (
@@ -156,7 +164,7 @@ export default function Home() {
 
   return (
     <div className={styles.root}>
-      <div className={classNames(styles.titleContainer, inter.className)}>
+      <div className={classNames(styles.titleContainer, titleInter.className)}>
         <div className={styles.title}>New York Subway</div>
         <div className={styles.description}>
           One <p className={styles.appleText}> apple </p> at a time
@@ -169,6 +177,24 @@ export default function Home() {
         <div className={styles.statenIsland}>Staten Island</div>
         <div className={styles.queens}>Queens</div>
         <div className={styles.brooklyn}>Brooklyn</div>
+        {isGameOverRef.current === false && (
+          <div className={styles.gameOverOverlay}>
+            <p
+              className={classNames(styles.overlayTitle, titleInter.className)}
+            >
+              Game Over
+            </p>
+            <div
+              className={classNames(styles.overlayDescription, inter.className)}
+            >
+              Press
+              <p className={classNames(styles.spaceButton, mono.className)}>
+                SPACE
+              </p>
+              to get on the subway again!
+            </div>
+          </div>
+        )}
         <div className={styles.grid}>
           {Array.from(Array(N).keys()).map((y) => {
             return Array.from(Array(N).keys()).map((x) => {
