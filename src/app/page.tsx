@@ -16,6 +16,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAppleAlt } from "@fortawesome/free-solid-svg-icons";
 import { Inter } from "@next/font/google";
 
+const inter = Inter({ subsets: ["latin"], weight: "600" });
+
 /**
  * State behaves like a snapshot. When we call three setState consecutively
  * ----------
@@ -34,7 +36,7 @@ export default function Home() {
   const requestRef = React.useRef<number>(0);
   const previousTimeRef = React.useRef<number>();
   const directionRef = React.useRef<Direction>(Direction.DOWN);
-  const previousDirectionRef = React.useRef<Direction>();
+  const previousDirectionRef = React.useRef<Direction>(Direction.DOWN);
   const foodRef = React.useRef<Coordionate>();
 
   React.useEffect(() => {
@@ -97,7 +99,7 @@ export default function Home() {
 
       var delta = currentDelta! - previousTimeRef.current!;
 
-      if (500 && delta < 500 / 1) {
+      if (500 && delta < 200 / 1) {
         return;
       }
 
@@ -154,9 +156,11 @@ export default function Home() {
 
   return (
     <div className={styles.root}>
-      <div className={styles.titleContainer}>
+      <div className={classNames(styles.titleContainer, inter.className)}>
         <div className={styles.title}>New York Subway</div>
-        <div className={styles.description}>One apple at a time</div>
+        <div className={styles.description}>
+          One <p className={styles.appleText}> apple </p> at a time
+        </div>
       </div>
 
       <div className={styles.gridWrapper}>

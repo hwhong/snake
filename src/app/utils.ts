@@ -1,9 +1,9 @@
 import { Coordionate, Direction, Range } from "./type";
 
 export const defaultCoordinates: Coordionate[] = [
-  { x: 5, y: 5 },
-  { x: 5, y: 4 },
-  { x: 5, y: 3 },
+  { x: 10, y: 8 },
+  { x: 10, y: 9 },
+  { x: 10, y: 10 },
 ];
 
 export const directionDispatch: Record<
@@ -26,9 +26,12 @@ export const isDiretionValid = (
   currentDirection: Direction,
   newDirection: Direction
 ) => {
+  console.log(currentDirection, newDirection);
   if (
     (currentDirection === Direction.DOWN && newDirection === Direction.UP) ||
-    (currentDirection === Direction.LEFT && newDirection === Direction.RIGHT)
+    (currentDirection === Direction.UP && newDirection === Direction.DOWN) ||
+    (currentDirection === Direction.LEFT && newDirection === Direction.RIGHT) ||
+    (currentDirection === Direction.RIGHT && newDirection === Direction.LEFT)
   ) {
     return false;
   }
