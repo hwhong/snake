@@ -9,6 +9,7 @@
 
 .gridWrapper {
   position: relative;
+  user-select: none;
 }
 
 .grid {
