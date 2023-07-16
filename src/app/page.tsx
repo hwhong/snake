@@ -14,6 +14,7 @@ import {
 } from "./utils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAppleAlt } from "@fortawesome/free-solid-svg-icons";
+import { Inter } from "@next/font/google";
 
 /**
  * State behaves like a snapshot. When we call three setState consecutively
@@ -35,7 +36,6 @@ export default function Home() {
   const directionRef = React.useRef<Direction>(Direction.DOWN);
   const previousDirectionRef = React.useRef<Direction>();
   const foodRef = React.useRef<Coordionate>();
-  // const isGameOver = React.useRef<boolean>(false);
 
   React.useEffect(() => {
     const onKeyDown = (e: any) => {
@@ -154,7 +154,11 @@ export default function Home() {
 
   return (
     <div className={styles.root}>
-      {isGameOver && <div>GAME OVER</div>}
+      <div className={styles.titleContainer}>
+        <div className={styles.title}>New York Subway</div>
+        <div className={styles.description}>One apple at a time</div>
+      </div>
+
       <div className={styles.gridWrapper}>
         <div className={styles.manhattan}>Manhattan</div>
         <div className={styles.bronx}>The Bronx</div>

@@ -3,6 +3,8 @@
   justify-content: center;
   flex-direction: column;
   align-items: center;
+  background-color: rgba(162, 201, 230, 0.2);
+  height: 100vh;
 }
 
 .gridWrapper {
@@ -93,4 +95,19 @@
   right: 170px;
   font-size: 16px;
   font-weight: bold;
+}
+
+.titleContainer {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  font-size: 18px;
+  font-weight: 500;
+  display: flex;
+  flex-direction: column;
+}
+
+.description {
+  font-size: 12px;
+  color: #8c8c8c;
 }
