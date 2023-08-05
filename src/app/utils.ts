@@ -26,7 +26,6 @@ export const isDiretionValid = (
   currentDirection: Direction,
   newDirection: Direction
 ) => {
-  console.log(currentDirection, newDirection);
   if (
     (currentDirection === Direction.DOWN && newDirection === Direction.UP) ||
     (currentDirection === Direction.UP && newDirection === Direction.DOWN) ||

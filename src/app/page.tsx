@@ -34,7 +34,9 @@ const mono = Roboto_Mono({ subsets: ["latin"] });
  */
 
 export default function Home() {
-  const [coords, setCoords] = React.useState<Coordionate[]>(defaultCoordinates);
+  const [coords, setCoords] = React.useState<Coordionate[]>([
+    ...defaultCoordinates,
+  ]);
   const requestRef = React.useRef<number>(0);
   const previousTimeRef = React.useRef<number>();
   const directionRef = React.useRef<Direction>(Direction.DOWN);
@@ -45,28 +47,33 @@ export default function Home() {
 
   React.useEffect(() => {
     const onKeyDown = (e: any) => {
-      previousDirectionRef.current = directionRef.current;
-      console.log(e);
+      let newDirection = undefined;
       switch (e.key) {
         case "ArrowUp":
-          directionRef.current = Direction.UP;
+          newDirection = Direction.UP;
           break;
         case "ArrowDown":
-          directionRef.current = Direction.DOWN;
+          newDirection = Direction.DOWN;
           break;
         case "ArrowLeft":
-          directionRef.current = Direction.LEFT;
+          newDirection = Direction.LEFT;
           break;
         case "ArrowRight":
-          directionRef.current = Direction.RIGHT;
+          newDirection = Direction.RIGHT;
           break;
         case " ":
-          isGameOverRef.current = false;
-          setCoords(() => defaultCoordinates);
+          if (isGameOverRef.current) {
+            isGameOverRef.current = false;
+            setCoords([...defaultCoordinates]);
+          }
           break;
         default:
-          directionRef.current = Direction.DOWN;
+          newDirection = undefined;
           break;
+      }
+      if (newDirection && isDiretionValid(directionRef.current, newDirection)) {
+        previousDirectionRef.current = directionRef.current;
+        directionRef.current = newDirection;
       }
     };
     window.addEventListener("keydown", onKeyDown);
@@ -154,7 +161,6 @@ export default function Home() {
           newCoords.push(prevCoords[prevCoords.length - 1]);
           generateNewFood(prevCoords);
         }
-
         return newCoords;
       };
 
